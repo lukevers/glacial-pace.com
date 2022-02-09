@@ -1,0 +1,37 @@
+service: glacial-pace-com
+frameworkVersion: '2'
+
+provider:
+  name: aws
+  runtime: nodejs14.x
+  region: ${opt:region, 'us-east-1'}
+  lambdaHashingVersion: '20201221'
+
+plugins:
+  - serverless-plugin-typescript
+  - serverless-offline
+  - serverless-domain-manager
+
+package:
+  include:
+    - 'app/build/**'
+
+custom:
+  customDomain:
+    domainName: glacial-pace.com
+    basePath: ''
+    stage: ${opt:stage, 'dev'}
+    createRoute53Record: true
+
+functions:
+  render:
+    handler: handler.render
+    events:
+      - http:
+          path: ''
+          method: any
+          cors: true
+      - http:
+          path: /{any+}
+          method: any
+          cors: true
